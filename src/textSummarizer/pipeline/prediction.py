@@ -8,17 +8,32 @@ class PredictionPipeline:
         self.config = ConfigurationManager().get_model_evaluation_config()
 
     def predict(self, text):
-        """Takes raw text and returns a generated summary."""
+        """Takes raw text and return a generated summary using direct model generation."""
         tokenizer = AutoTokenizer.from_pretrained(self.config.tokenizer_path)
         model = AutoModelForSeq2SeqLM.from_pretrained(self.config.model_path)
 
+        # Move to GPU if available
+        import torch
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        model.to(device)
+
+        # Prepare payload
+        inputs = tokenizer(text, return_tensors="pt", max_length=1024, truncation=True).to(device)
+        
+        # Generation configuration
         gen_kwargs = {
-            "length_penalty": 0.8,
-            "num_beams": 8,
+            "length_penalty": 2.0,
+            "num_beams": 4,
             "max_length": 128,
+            "min_length": 30
         }
 
-        pipe = pipeline("summarization", model=model, tokenizer=tokenizer)
-        output = pipe(text, **gen_kwargs)
+        # Generate summary
+        summary_ids = model.generate(
+            input_ids=inputs["input_ids"],
+            attention_mask=inputs["attention_mask"],
+            **gen_kwargs
+        )
 
-        return output[0]["summary_text"]
+        summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+        return summary
