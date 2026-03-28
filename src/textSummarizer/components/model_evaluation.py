@@ -3,7 +3,8 @@ import pandas as pd
 from tqdm import tqdm
 from textSummarizer.logging import logger
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-from datasets import load_dataset, load_from_disk, load_metric
+from datasets import load_dataset, load_from_disk
+import evaluate
 
 
 class ModelEvaluation:
@@ -70,7 +71,7 @@ class ModelEvaluation:
         dataset_samsum_pt = load_from_disk(self.config.data_path)
 
         rouge_names = ["rouge1", "rouge2", "rougeL", "rougeLsum"]
-        rouge_metric = load_metric("rouge")
+        rouge_metric = evaluate.load("rouge")
 
         score = self.calculate_metric_on_test_ds(
             dataset_samsum_pt["test"][0:10],
@@ -83,7 +84,7 @@ class ModelEvaluation:
         )
 
         rouge_dict = dict(
-            (rn, score[rn].mid.fmeasure) for rn in rouge_names
+            (rn, score[rn]) for rn in rouge_names
         )
 
         df = pd.DataFrame(rouge_dict, index=["pegasus"])

@@ -1,5 +1,5 @@
-transformers==4.38.2
-datasets==2.18.0
+transformers>=4.40.0
+datasets>=2.18.0
 torch
 sentencepiece
 protobuf
@@ -15,4 +15,5 @@ fastapi==0.110.0
 uvicorn==0.27.1
 jinja2
 accelerate
+evaluate
 -e .

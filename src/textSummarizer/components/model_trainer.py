@@ -5,8 +5,8 @@ from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
-    TrainingArguments,
-    Trainer,
+    Seq2SeqTrainingArguments,
+    Seq2SeqTrainer,
 )
 from datasets import load_dataset, load_from_disk
 
@@ -28,7 +28,7 @@ class ModelTrainer:
         # Load tokenized dataset
         dataset_samsum_pt = load_from_disk(self.config.data_path)
 
-        trainer_args = TrainingArguments(
+        trainer_args = Seq2SeqTrainingArguments(
             output_dir=self.config.root_dir,
             num_train_epochs=self.config.num_train_epochs,
             warmup_steps=self.config.warmup_steps,
@@ -36,16 +36,15 @@ class ModelTrainer:
             per_device_eval_batch_size=self.config.per_device_eval_batch_size,
             weight_decay=self.config.weight_decay,
             logging_steps=self.config.logging_steps,
-            evaluation_strategy=self.config.evaluation_strategy,
+            eval_strategy=self.config.evaluation_strategy,
             eval_steps=self.config.eval_steps,
             save_steps=self.config.save_steps,
             gradient_accumulation_steps=self.config.gradient_accumulation_steps,
         )
 
-        trainer = Trainer(
+        trainer = Seq2SeqTrainer(
             model=model_pegasus,
             args=trainer_args,
-            tokenizer=tokenizer,
             data_collator=seq2seq_data_collator,
             train_dataset=dataset_samsum_pt["train"],
             eval_dataset=dataset_samsum_pt["validation"],
