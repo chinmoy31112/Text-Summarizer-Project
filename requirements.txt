@@ -1,0 +1,18 @@
+transformers==4.38.2
+datasets==2.18.0
+torch
+sentencepiece
+protobuf
+rouge-score
+py7zr
+pandas
+nltk
+tqdm
+PyYAML
+python-box==7.1.1
+ensure==1.0.4
+fastapi==0.110.0
+uvicorn==0.27.1
+jinja2
+accelerate
+-e .
