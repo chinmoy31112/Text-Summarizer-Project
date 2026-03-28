@@ -74,6 +74,53 @@ docker run -p 8080:8080 text-summarizer
 | **Dataset** | [SAMSum](https://huggingface.co/datasets/samsum) (16k dialogue-summary pairs) |
 | **Metrics** | ROUGE-1, ROUGE-2, ROUGE-L, ROUGE-Lsum |
 
+## 📥 Download & Setup Pre-trained Weights
+
+Since the fine-tuned model weights are large (2.2GB), they are not included in this repository. Follow these steps to set them up correctly:
+
+### 1. Download
+Download all files from this folder:
+- **[Download Fine-tuned Weights (Google Drive)](https://drive.google.com/drive/folders/1JqetHgteEGAB-D1fzPob1yuUrRl06ZXJ?usp=drive_link)**
+
+### 2. Organize & "Merge" Files
+You need to create a specific folder structure inside the project. Follow these exact steps:
+
+1.  Create the following folders in your project root:
+    `artifacts/model_trainer/pegasus-samsum-model`
+    `artifacts/model_trainer/tokenizer`
+
+2.  **Move the files** as follows:
+    *   Place `config.json` and `generation_config.json` into:
+        `artifacts/model_trainer/pegasus-samsum-model/`
+    *   Place the large `model-001.safetensors` into:
+        `artifacts/model_trainer/pegasus-samsum-model/` and **rename it** to `model.safetensors`.
+    *   Place `tokenizer.json` and `tokenizer_config.json` into:
+        `artifacts/model_trainer/tokenizer/`
+
+Your structure should look like this:
+```text
+artifacts/
+└── model_trainer/
+    ├── pegasus-samsum-model/
+    │   ├── config.json
+    │   ├── generation_config.json
+    │   └── model.safetensors       <-- (Renamed from model-001.safetensors)
+    └── tokenizer/
+        ├── tokenizer.json
+        └── tokenizer_config.json
+```
+
+Once this is done, `python app.py` will automatically detect and use your fine-tuned model!
+
+## 📈 Comparison of Summarization Models
+
+| Model | Developed By | Best Use Case | Approx. Size |
+|-------|-------------|---------------|--------------|
+| **PEGASUS** | Google | Specifically designed for abstractive summarization. Specialized in news and dialogue. | **2.2 GB** |
+| **BART** | Facebook | Excellent for conversational data and informal text. Very strong on SAMSum. | **1.6 GB** |
+| **T5** | Google | Versatile text-to-text model. Balanced efficiency and performance. | **240MB - 900MB** |
+| **GPT/Llama** | OpenAI / Meta | State-of-the-art general purpose LLMs. Highest quality but very large. | **15GB+** |
+
 ## 📜 License
 
 MIT License — see [LICENSE](LICENSE) for details.
